@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 /// Internal stepper button widget supporting single tap and continuous
 /// long-press auto-repeat with optional turbo acceleration.

@@ -1,6 +1,6 @@
 name: input_number
 description: A modern, customizable numeric input and stepper widget for Flutter with precision math, formatting, keyboard, mouse wheel, and FormField support.
-version: 1.0.1
+version: 1.0.2
 homepage: https://humanize.id
 repository: https://github.com/andikpbw/flutter-input-number
 issue_tracker: https://github.com/andikpbw/flutter-input-number/issues

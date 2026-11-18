@@ -41,7 +41,7 @@ Add `input_number` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  input_number: ^1.0.1
+  input_number: ^1.0.2
 ```
 
 Or install via the Flutter CLI:

@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.2
+
+- Replaced unnecessary `package:flutter/material.dart` imports with `package:flutter/widgets.dart` in `InputNumberFormField` and `StepperButton`.
+- Resolved Flutter 3.47+ static analysis deprecation lints (`deprecated_member_use`) on `package:flutter/material.dart` while maintaining backwards compatibility with Flutter `>=3.24.0`.
+
 ## 1.0.1
 
 - Added `InputNumberFormat.european()` and `InputNumberFormat.unit()` presets for global number and measurement unit formatting.

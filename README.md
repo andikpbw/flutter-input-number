@@ -1,45 +1,47 @@
 # input_number
 
 [![pub package](https://img.shields.io/pub/v/input_number.svg)](https://pub.dev/packages/input_number)
-[![License: MIT](https://img.shields.io/badge/License-MIT-indigo.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Flutter](https://img.shields.io/badge/Flutter-3.0%2B-02569B?logo=flutter)](https://flutter.dev)
 [![Platform](https://img.shields.io/badge/platform-android%20%7C%20ios%20%7C%20web%20%7C%20macos%20%7C%20windows%20%7C%20linux-blue.svg)](https://pub.dev/packages/input_number)
+[![Powered by Humanize AI](https://img.shields.io/badge/Powered%20by-Humanize%20AI-9c27b0.svg)](https://humanize.id)
 
-A modern, customizable, and zero-dependency numeric input and stepper widget library for Flutter. Built for Material 3 with precision-safe decimal arithmetic, flexible stepper button layouts, currency & locale formatting, long-press turbo acceleration, keyboard/mouse wheel navigation, and full `FormField` support.
+A modern, customizable, and zero-dependency numeric input and stepper widget library for Flutter. Built for Material 3 with precision-safe decimal arithmetic, flexible stepper button layouts, currency & unit formatting, long-press turbo acceleration, keyboard/mouse wheel navigation, and full `FormField` support.
 
-Sponsored and supported by **[Humanize AI](https://humanize.id)**.
+> 🌟 Supported & Powered by [Humanize AI](https://humanize.id)
 
 ---
 
-## Features
+## ✨ Features
 
-- **Precision-Safe Decimal Math**: Eliminates IEEE 754 floating-point drift (`0.1 + 0.2 == 0.3` guaranteed) via `NumberMath`.
-- **4 Stepper Button Layouts**:
+- 🚀 **Precision-Safe Decimal Math**: Eliminates IEEE 754 floating-point drift (`0.1 + 0.2 == 0.3` guaranteed) via `NumberMath`.
+- 🎛️ **4 Stepper Button Layouts** (`InputNumberButtonLayout`):
   - `InputNumberButtonLayout.split` (`[-] 12 [+]`) — ideal for mobile & e-commerce quantity pickers.
   - `InputNumberButtonLayout.stackedEnd` (`12 [▲/▼]`) — classic desktop spinbox layout.
   - `InputNumberButtonLayout.inlineEnd` (`12 [-][+]`) — compact trailing actions.
   - `InputNumberButtonLayout.none` — clean numeric field with keyboard/wheel stepping.
-- **4 Visual Variants & 3 Sizes**:
+- 🎨 **4 Visual Variants & 3 Sizes**:
   - `outlined`, `filled`, `underlined`, and `pill` (stadium capsule).
   - `small`, `medium`, and `large` presets with full override support via `InputNumberStyle`.
-- **Built-in Formatting & Presets (`InputNumberFormat`)**:
+- 💱 **Built-in Formatting & Presets** (`InputNumberFormat`):
   - Thousand grouping separators (`,` or `.`), custom decimal separators, prefixes, suffixes, and fixed decimal padding.
-  - Ready-to-use presets: `InputNumberFormat.standard()`, `InputNumberFormat.decimal()`, `InputNumberFormat.currency()`, `InputNumberFormat.idr()`, and `InputNumberFormat.percentage()`.
-- **Long-Press Auto-Repeat with Turbo Acceleration**: Hold down `+` or `-` to step continuously with progressive speed-up.
-- **Desktop & Web Ready**:
+  - Ready-to-use presets: `InputNumberFormat.standard()`, `InputNumberFormat.decimal()`, `InputNumberFormat.currency()`, `InputNumberFormat.european()`, `InputNumberFormat.percentage()`, and `InputNumberFormat.unit()`.
+- ⚡ **Long-Press Auto-Repeat with Turbo Acceleration**: Hold down `+` or `-` to step continuously with progressive speed-up.
+- 🖥️ **Desktop & Web Ready**:
   - `ArrowUp` / `ArrowDown` for standard step, `PageUp` / `PageDown` for `largeStep`.
   - Mouse scroll wheel stepping when focused.
-- **Seamless Form Integration**: `InputNumberFormField` integrates directly with Flutter's `Form`, `validator`, `onSaved`, `reset`, and `AutovalidateMode`.
-- **Rich Controller API**: `InputNumberController` extends `ValueNotifier<num?>` with `increment()`, `decrement()`, `setValue()`, `reset()`, `clear()`, and dynamic bound updates.
+- 📋 **Seamless Form Integration**: `InputNumberFormField` integrates directly with Flutter's `Form`, `validator`, `onSaved`, `reset`, and `AutovalidateMode`.
+- 🎮 **Rich Programmatic Controller** (`InputNumberController`): Extends `ValueNotifier<num?>` with `increment()`, `decrement()`, `setValue()`, `reset()`, `clear()`, and dynamic bound updates.
 
 ---
 
-## Installation
+## 📦 Installation
 
 Add `input_number` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  input_number: ^1.0.0
+  input_number: ^1.0.1
 ```
 
 Or install via the Flutter CLI:
@@ -50,7 +52,7 @@ flutter pub add input_number
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ```dart
 import 'package:flutter/material.dart';
@@ -77,7 +79,7 @@ class QuantitySelector extends StatelessWidget {
 
 ---
 
-## Usage Examples
+## 📖 Usage Examples
 
 ### 1. Button Layouts & Visual Variants
 
@@ -102,7 +104,7 @@ InputNumber(
 )
 ```
 
-### 2. Currency, Rupiah (IDR), and Percentage Formatting
+### 2. Currency, Percentage, and Unit Formatting
 
 ```dart
 // USD Currency ($1,250.50)
@@ -115,25 +117,35 @@ InputNumber(
   format: const InputNumberFormat.currency(symbol: r'$'),
 )
 
-// Indonesian Rupiah (Rp 1.500.000)
+// European Format (€1.250,50)
 InputNumber(
-  labelText: 'Harga (IDR)',
-  initialValue: 1500000,
+  labelText: 'Amount (EUR)',
+  initialValue: 1250.5,
   min: 0,
-  step: 50000,
-  precision: 0,
-  format: const InputNumberFormat.idr(),
+  step: 50,
+  precision: 2,
+  format: const InputNumberFormat.european(symbol: '€', padDecimals: true),
 )
 
-// Percentage (75.5%)
+// Percentage (15.5%)
 InputNumber(
-  labelText: 'Discount',
+  labelText: 'Discount Rate',
   initialValue: 15.5,
   min: 0,
   max: 100,
   step: 0.5,
   precision: 1,
   format: const InputNumberFormat.percentage(),
+)
+
+// Physical / Measurement Units (1,250 kg)
+InputNumber(
+  labelText: 'Payload Weight',
+  initialValue: 1250,
+  min: 0,
+  step: 25,
+  precision: 0,
+  format: const InputNumberFormat.unit(unit: 'kg'),
 )
 ```
 
@@ -147,7 +159,7 @@ final controller = InputNumberController(
   step: 5,
 );
 
-// Listen to changes or bind to ValueListenableBuilder<num?>
+// Bind to InputNumber and listen with ValueListenableBuilder<num?>
 InputNumber(
   controller: controller,
   showClearButton: true,
@@ -191,8 +203,8 @@ InputNumber(
   style: InputNumberStyle(
     height: 48,
     borderRadius: BorderRadius.circular(14),
-    focusedBorderColor: Colors.teal,
-    buttonHoverColor: Colors.teal.withValues(alpha: 0.1),
+    focusedBorderColor: Colors.indigo,
+    buttonHoverColor: Colors.indigo.withValues(alpha: 0.1),
     incrementIcon: Icons.add_circle_outline_rounded,
     decrementIcon: Icons.remove_circle_outline_rounded,
   ),
@@ -201,7 +213,7 @@ InputNumber(
 
 ---
 
-## Keyboard & Mouse Shortcuts
+## ⌨️ Keyboard & Mouse Shortcuts
 
 | Interaction | Action |
 | :--- | :--- |
@@ -213,16 +225,16 @@ InputNumber(
 
 ---
 
-## Support & Sponsor
+## 💖 Support & Sponsor
 
-This open-source library is proudly supported by **[Humanize AI](https://humanize.id)** — platform AI Humanizer modern untuk mengubah teks AI menjadi tulisan natural dan manusiawi.
+This open-source library is proudly supported and powered by **[Humanize AI](https://humanize.id)** — an advanced AI platform for natural and human-like content generation.
 
-- Website: [Humanize AI](https://humanize.id)
-- Repository: [https://github.com/andikpbw/flutter-input-number.git](https://github.com/andikpbw/flutter-input-number.git)
-- Issue Tracker: [GitHub Issues](https://github.com/andikpbw/flutter-input-number/issues)
+- **Website**: [Humanize AI](https://humanize.id)
+- **Repository**: [https://github.com/andikpbw/flutter-input-number.git](https://github.com/andikpbw/flutter-input-number.git)
+- **Issue Tracker**: [GitHub Issues](https://github.com/andikpbw/flutter-input-number/issues)
 
 ---
 
-## License
+## 📄 License
 
 Released under the [MIT License](LICENSE).

@@ -98,8 +98,8 @@ class InputNumber extends StatefulWidget {
 
   /// Controlled numeric value when [controller] is not provided.
   ///
-  /// When non-null, updating this field in a parent rebuild updates the
-  /// displayed value.
+  /// When updated in a parent rebuild, the displayed value synchronizes
+  /// automatically.
   final num? value;
 
   /// Initial numeric value for uncontrolled usage when both [controller]
@@ -298,8 +298,9 @@ class _InputNumberState extends State<InputNumber> {
     super.didUpdateWidget(oldWidget);
 
     if (widget.focusNode != oldWidget.focusNode) {
-      (oldWidget.focusNode ?? _internalFocusNode)
-          ?.removeListener(_handleFocusChange);
+      (oldWidget.focusNode ?? _internalFocusNode)?.removeListener(
+        _handleFocusChange,
+      );
       if (widget.focusNode == null && _internalFocusNode == null) {
         _internalFocusNode = FocusNode();
       }
@@ -308,8 +309,9 @@ class _InputNumberState extends State<InputNumber> {
     }
 
     if (widget.controller != oldWidget.controller) {
-      (oldWidget.controller ?? _internalController)
-          ?.removeListener(_handleControllerChange);
+      (oldWidget.controller ?? _internalController)?.removeListener(
+        _handleControllerChange,
+      );
       if (widget.controller == null) {
         _internalController ??= InputNumberController(
           value: widget.value ??
@@ -326,7 +328,7 @@ class _InputNumberState extends State<InputNumber> {
         _syncExternalControllerBounds();
       }
       _effectiveController.addListener(_handleControllerChange);
-      _syncTextWithController();
+      _syncTextWithController(force: true);
     } else {
       if (widget.controller == null) {
         _internalController!.updateBounds(
@@ -339,7 +341,7 @@ class _InputNumberState extends State<InputNumber> {
           clearPrecision: widget.precision == null,
           clampCurrentValue: widget.clampOnBlur,
         );
-        if (widget.value != oldWidget.value && widget.value != null) {
+        if (widget.value != oldWidget.value) {
           _internalController!.setValue(
             widget.value,
             clamp: widget.clampOnBlur,
@@ -352,7 +354,7 @@ class _InputNumberState extends State<InputNumber> {
 
     if (widget.format != oldWidget.format ||
         widget.precision != oldWidget.precision) {
-      _syncTextWithController();
+      _syncTextWithController(force: !_isFocused);
     }
   }
 
@@ -416,9 +418,19 @@ class _InputNumberState extends State<InputNumber> {
     _syncTextWithController();
   }
 
-  void _syncTextWithController() {
+  void _syncTextWithController({bool force = false}) {
+    final currentValue = _effectiveController.value;
+    if (_isFocused && !widget.readOnly && !force) {
+      // Avoid overwriting in-progress user typing (e.g. "12." or "12.0")
+      // when the parsed text already matches the controller value.
+      final currentParsed = widget.format.parse(_textController.text);
+      if (currentParsed == currentValue &&
+          (currentValue != null || _textController.text.trim().isEmpty)) {
+        return;
+      }
+    }
     final formatted = _formatForDisplay(
-      _effectiveController.value,
+      currentValue,
       forEditing: _isFocused && !widget.readOnly,
     );
     if (_textController.text != formatted) {
@@ -528,7 +540,7 @@ class _InputNumberState extends State<InputNumber> {
       }
     }
 
-    _syncTextWithController();
+    _syncTextWithController(force: true);
 
     final current = _effectiveController.value;
     if (current != previous) {
@@ -558,7 +570,7 @@ class _InputNumberState extends State<InputNumber> {
         ? _effectiveController.increment(delta)
         : _effectiveController.decrement(delta);
 
-    _syncTextWithController();
+    _syncTextWithController(force: true);
 
     if (next != previous) {
       if (widget.enableHaptics) {
@@ -578,7 +590,7 @@ class _InputNumberState extends State<InputNumber> {
     }
     final previous = _effectiveController.value;
     _effectiveController.clear();
-    _syncTextWithController();
+    _syncTextWithController(force: true);
     if (previous != null) {
       widget.onChanged?.call(null);
     }

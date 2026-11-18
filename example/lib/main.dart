@@ -175,7 +175,7 @@ class _ShowcaseHomePageState extends State<ShowcaseHomePage> {
             _buildSectionCard(
               title: '3. Precision Math & Formatting Presets',
               subtitle:
-                  'IEEE 754 safe decimal stepping, currency, IDR, and percentages.',
+                  'IEEE 754 safe decimal stepping, currencies, units, and percentages.',
               children: const [
                 InputNumber(
                   labelText: 'Decimal Precision (step: 0.1)',
@@ -198,12 +198,15 @@ class _ShowcaseHomePageState extends State<ShowcaseHomePage> {
                 ),
                 SizedBox(height: 16),
                 InputNumber(
-                  labelText: 'Indonesian Rupiah (IDR)',
-                  initialValue: 1500000,
+                  labelText: 'European Currency Format (EUR)',
+                  initialValue: 1250.5,
                   min: 0,
-                  step: 50000,
-                  precision: 0,
-                  format: InputNumberFormat.idr(),
+                  step: 50,
+                  precision: 2,
+                  format: InputNumberFormat.european(
+                    symbol: '€',
+                    padDecimals: true,
+                  ),
                   buttonLayout: InputNumberButtonLayout.inlineEnd,
                 ),
                 SizedBox(height: 16),
@@ -215,6 +218,15 @@ class _ShowcaseHomePageState extends State<ShowcaseHomePage> {
                   step: 0.5,
                   precision: 1,
                   format: InputNumberFormat.percentage(),
+                ),
+                SizedBox(height: 16),
+                InputNumber(
+                  labelText: 'Measurement Unit Format',
+                  initialValue: 1250,
+                  min: 0,
+                  step: 25,
+                  precision: 0,
+                  format: InputNumberFormat.unit(unit: 'kg'),
                 ),
               ],
             ),

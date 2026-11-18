@@ -57,7 +57,7 @@ enum InputNumberVariant {
 /// Configuration for formatting and parsing numeric values in `InputNumber`.
 ///
 /// Supports thousand grouping separators, custom decimal separators,
-/// text prefixes and suffixes (such as currency symbols or units),
+/// text prefixes and suffixes (such as currency symbols or measurement units),
 /// fixed decimal padding, and custom formatter/parser callbacks.
 @immutable
 class InputNumberFormat {
@@ -99,7 +99,7 @@ class InputNumberFormat {
           'decimalSeparator and thousandSeparator must not be identical.',
         );
 
-  /// Creates a currency format (e.g., `$1,234.50`).
+  /// Creates a currency format (e.g., `$1,234.50`, `€1,234.50`, or `£1,234.50`).
   const InputNumberFormat.currency({
     String symbol = r'$',
     this.thousandSeparator = ',',
@@ -115,16 +115,22 @@ class InputNumberFormat {
           'decimalSeparator and thousandSeparator must not be identical.',
         );
 
-  /// Creates an Indonesian Rupiah (`Rp 1.250.000`) format preset.
-  const InputNumberFormat.idr({
-    String symbol = 'Rp ',
+  /// Creates a European-style format using `.` for thousands and `,` for
+  /// decimals (e.g., `1.250,50` or `€1.250,50`).
+  const InputNumberFormat.european({
+    String symbol = '',
+    this.thousandSeparator = '.',
+    this.decimalSeparator = ',',
     this.padDecimals = false,
-  })  : thousandSeparator = '.',
-        decimalSeparator = ',',
-        prefix = symbol,
-        suffix = '',
+    bool symbolAtEnd = false,
+  })  : prefix = symbolAtEnd ? '' : symbol,
+        suffix = symbolAtEnd ? symbol : '',
         customFormatter = null,
-        customParser = null;
+        customParser = null,
+        assert(
+          decimalSeparator != thousandSeparator,
+          'decimalSeparator and thousandSeparator must not be identical.',
+        );
 
   /// Creates a percentage format (e.g., `75.5%`).
   const InputNumberFormat.percentage({
@@ -133,6 +139,22 @@ class InputNumberFormat {
     this.decimalSeparator = '.',
     this.padDecimals = false,
   })  : prefix = '',
+        customFormatter = null,
+        customParser = null,
+        assert(
+          decimalSeparator != thousandSeparator,
+          'decimalSeparator and thousandSeparator must not be identical.',
+        );
+
+  /// Creates a measurement unit format (e.g., `1,250 kg`, `100 px`, `24.5 °C`).
+  const InputNumberFormat.unit({
+    required String unit,
+    this.thousandSeparator = ',',
+    this.decimalSeparator = '.',
+    this.padDecimals = false,
+    bool spaceBeforeUnit = true,
+  })  : prefix = '',
+        suffix = spaceBeforeUnit ? ' $unit' : unit,
         customFormatter = null,
         customParser = null,
         assert(
@@ -150,7 +172,7 @@ class InputNumberFormat {
   /// Defaults to `'.'`.
   final String decimalSeparator;
 
-  /// Text prepended to the formatted number (e.g., `'$'` or `'Rp '`).
+  /// Text prepended to the formatted number (e.g., `'$'` or `'€'`).
   final String prefix;
 
   /// Text appended to the formatted number (e.g., `'%'` or `' kg'`).

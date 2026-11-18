@@ -6,7 +6,7 @@ An interactive showcase app demonstrating `input_number` features:
 - Visual container variants (`outlined`, `filled`, `underlined`, `pill`)
 - Sizes (`small`, `medium`, `large`)
 - Precision decimal math (`0.1` steps without floating-point drift)
-- Formatting presets (`currency`, `idr`, `percentage`, `decimal`)
+- Formatting presets (`currency`, `european`, `percentage`, `unit`, `decimal`)
 - `InputNumberFormField` with validation
 - Programmatic control via `InputNumberController`
 

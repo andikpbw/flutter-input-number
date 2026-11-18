@@ -19,13 +19,15 @@ Widget _wrap(Widget child) {
 
 void main() {
   group('NumberMath', () {
-    test('countDecimals handles integers, decimals, and scientific notation',
-        () {
-      expect(NumberMath.countDecimals(10), 0);
-      expect(NumberMath.countDecimals(10.0), 0);
-      expect(NumberMath.countDecimals(0.125), 3);
-      expect(NumberMath.countDecimals(1e-5), 5);
-    });
+    test(
+      'countDecimals handles integers, decimals, and scientific notation',
+      () {
+        expect(NumberMath.countDecimals(10), 0);
+        expect(NumberMath.countDecimals(10.0), 0);
+        expect(NumberMath.countDecimals(0.125), 3);
+        expect(NumberMath.countDecimals(1e-5), 5);
+      },
+    );
 
     test('safeAdd and safeSubtract eliminate IEEE 754 drift', () {
       expect(NumberMath.safeAdd(0.1, 0.2), 0.3);
@@ -51,26 +53,34 @@ void main() {
 
   group('InputNumberFormat', () {
     test(
-        'standard, decimal, currency, idr, and percentage presets format and parse',
-        () {
-      const currency = InputNumberFormat.currency();
-      expect(currency.format(1234.5, precision: 2), r'$1,234.50');
-      expect(currency.format(-1234.5, precision: 2), r'-$1,234.50');
-      expect(currency.parse(r'$1,234.50'), 1234.5);
-      expect(currency.parse(r'-$1,234.50'), -1234.5);
+      'standard, decimal, currency, european, percentage, and unit presets format and parse',
+      () {
+        const currency = InputNumberFormat.currency();
+        expect(currency.format(1234.5, precision: 2), r'$1,234.50');
+        expect(currency.format(-1234.5, precision: 2), r'-$1,234.50');
+        expect(currency.parse(r'$1,234.50'), 1234.5);
+        expect(currency.parse(r'-$1,234.50'), -1234.5);
 
-      const idr = InputNumberFormat.idr();
-      expect(idr.format(1500000, precision: 0), 'Rp 1.500.000');
-      expect(idr.parse('Rp 1.500.000'), 1500000);
+        const european = InputNumberFormat.european(
+          symbol: '€',
+          padDecimals: true,
+        );
+        expect(european.format(1250.5, precision: 2), '€1.250,50');
+        expect(european.parse('€1.250,50'), 1250.5);
 
-      const pct = InputNumberFormat.percentage();
-      expect(pct.format(75.5, precision: 1), '75.5%');
-      expect(pct.parse('75.5%'), 75.5);
+        const pct = InputNumberFormat.percentage();
+        expect(pct.format(75.5, precision: 1), '75.5%');
+        expect(pct.parse('75.5%'), 75.5);
 
-      const dec = InputNumberFormat.decimal();
-      expect(dec.format(9876543.21), '9,876,543.21');
-      expect(dec.parse('9,876,543.21'), 9876543.21);
-    });
+        const unit = InputNumberFormat.unit(unit: 'kg');
+        expect(unit.format(1250, precision: 0), '1,250 kg');
+        expect(unit.parse('1,250 kg'), 1250);
+
+        const dec = InputNumberFormat.decimal();
+        expect(dec.format(9876543.21), '9,876,543.21');
+        expect(dec.parse('9,876,543.21'), 9876543.21);
+      },
+    );
 
     test('copyWith and equality work properly', () {
       const formatA = InputNumberFormat.currency();
@@ -82,30 +92,32 @@ void main() {
   });
 
   group('NumericTextInputFormatter', () {
-    test('sanitizes invalid characters and respects negative and decimal rules',
-        () {
-      const formatter = NumericTextInputFormatter(
-        allowNegative: true,
-        allowDecimal: true,
-        maxDecimalDigits: 2,
-      );
+    test(
+      'sanitizes invalid characters and respects negative and decimal rules',
+      () {
+        const formatter = NumericTextInputFormatter(
+          allowNegative: true,
+          allowDecimal: true,
+          maxDecimalDigits: 2,
+        );
 
-      final result1 = formatter.formatEditUpdate(
-        TextEditingValue.empty,
-        const TextEditingValue(text: '-12a3.4567'),
-      );
-      expect(result1.text, '-123.45');
+        final result1 = formatter.formatEditUpdate(
+          TextEditingValue.empty,
+          const TextEditingValue(text: '-12a3.4567'),
+        );
+        expect(result1.text, '-123.45');
 
-      const positiveIntFormatter = NumericTextInputFormatter(
-        allowNegative: false,
-        allowDecimal: false,
-      );
-      final result2 = positiveIntFormatter.formatEditUpdate(
-        TextEditingValue.empty,
-        const TextEditingValue(text: '-0042.99'),
-      );
-      expect(result2.text, '4299');
-    });
+        const positiveIntFormatter = NumericTextInputFormatter(
+          allowNegative: false,
+          allowDecimal: false,
+        );
+        final result2 = positiveIntFormatter.formatEditUpdate(
+          TextEditingValue.empty,
+          const TextEditingValue(text: '-0042.99'),
+        );
+        expect(result2.text, '4299');
+      },
+    );
   });
 
   group('InputNumberController', () {
@@ -151,8 +163,9 @@ void main() {
   });
 
   group('InputNumber widget', () {
-    testWidgets('increments and decrements on stepper button taps',
-        (tester) async {
+    testWidgets('increments and decrements on stepper button taps', (
+      tester,
+    ) async {
       num? latestValue;
       final controller = InputNumberController(
         value: 2,
@@ -186,8 +199,9 @@ void main() {
       controller.dispose();
     });
 
-    testWidgets('handles decimal precision stepping without drift',
-        (tester) async {
+    testWidgets('handles decimal precision stepping without drift', (
+      tester,
+    ) async {
       final controller = InputNumberController(
         value: 0.1,
         min: 0,
@@ -210,43 +224,57 @@ void main() {
       controller.dispose();
     });
 
-    testWidgets('supports manual text input and clamps on blur',
-        (tester) async {
-      final controller = InputNumberController(
-        value: 10,
-        min: 5,
-        max: 50,
-      );
-      final focusNode = FocusNode();
+    testWidgets(
+      'supports manual text input, preserves decimal editing during parent rebuilds, and clamps on blur',
+      (tester) async {
+        num? controlledVal = 10;
+        final focusNode = FocusNode();
 
-      await tester.pumpWidget(
-        _wrap(
-          InputNumber(
-            controller: controller,
-            focusNode: focusNode,
+        await tester.pumpWidget(
+          StatefulBuilder(
+            builder: (context, setState) {
+              return _wrap(
+                InputNumber(
+                  value: controlledVal,
+                  min: 5,
+                  max: 50,
+                  focusNode: focusNode,
+                  onChanged: (val) => setState(() => controlledVal = val),
+                ),
+              );
+            },
           ),
-        ),
-      );
+        );
 
-      await tester.enterText(find.byType(TextField), '25');
-      await tester.pump();
-      expect(controller.value, 25);
+        await tester.tap(find.byType(TextField));
+        await tester.pump();
 
-      // Enter out-of-range value and unfocus to trigger clampOnBlur.
-      await tester.enterText(find.byType(TextField), '999');
-      await tester.pump();
-      focusNode.unfocus();
-      await tester.pump();
+        // Simulate typing a trailing decimal point during active focus.
+        await tester.enterText(find.byType(TextField), '25.');
+        await tester.pump();
+        expect(controlledVal, 25);
+        expect(find.text('25.'), findsOneWidget);
 
-      expect(controller.value, 50);
-      expect(find.text('50'), findsOneWidget);
+        await tester.enterText(find.byType(TextField), '25.5');
+        await tester.pump();
+        expect(controlledVal, 25.5);
 
-      focusNode.dispose();
-      controller.dispose();
-    });
+        // Enter out-of-range value and unfocus to trigger clampOnBlur.
+        await tester.enterText(find.byType(TextField), '999');
+        await tester.pump();
+        focusNode.unfocus();
+        await tester.pump();
 
-    testWidgets('supports keyboard ArrowUp, ArrowDown, PageUp, and PageDown',
-        (tester) async {
+        expect(controlledVal, 50);
+        expect(find.text('50'), findsOneWidget);
+
+        focusNode.dispose();
+      },
+    );
+
+    testWidgets('supports keyboard ArrowUp, ArrowDown, PageUp, and PageDown', (
+      tester,
+    ) async {
       final controller = InputNumberController(
         value: 10,
         min: 0,
@@ -357,48 +385,50 @@ void main() {
       controller.dispose();
     });
 
-    testWidgets('renders all button layouts, variants, sizes, and clear button',
-        (tester) async {
-      final controller = InputNumberController(value: 42);
+    testWidgets(
+      'renders all button layouts, variants, sizes, and clear button',
+      (tester) async {
+        final controller = InputNumberController(value: 42);
 
-      await tester.pumpWidget(
-        _wrap(
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              InputNumber(
-                controller: controller,
-                buttonLayout: InputNumberButtonLayout.stackedEnd,
-                variant: InputNumberVariant.filled,
-                size: InputNumberSize.small,
-                showClearButton: true,
-              ),
-              const InputNumber(
-                initialValue: 10,
-                buttonLayout: InputNumberButtonLayout.inlineEnd,
-                variant: InputNumberVariant.pill,
-                size: InputNumberSize.large,
-              ),
-              const InputNumber(
-                initialValue: 5,
-                buttonLayout: InputNumberButtonLayout.none,
-                variant: InputNumberVariant.underlined,
-              ),
-            ],
+        await tester.pumpWidget(
+          _wrap(
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                InputNumber(
+                  controller: controller,
+                  buttonLayout: InputNumberButtonLayout.stackedEnd,
+                  variant: InputNumberVariant.filled,
+                  size: InputNumberSize.small,
+                  showClearButton: true,
+                ),
+                const InputNumber(
+                  initialValue: 10,
+                  buttonLayout: InputNumberButtonLayout.inlineEnd,
+                  variant: InputNumberVariant.pill,
+                  size: InputNumberSize.large,
+                ),
+                const InputNumber(
+                  initialValue: 5,
+                  buttonLayout: InputNumberButtonLayout.none,
+                  variant: InputNumberVariant.underlined,
+                ),
+              ],
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(find.byIcon(Icons.keyboard_arrow_up_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.keyboard_arrow_down_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.cancel_rounded), findsOneWidget);
+        expect(find.byIcon(Icons.keyboard_arrow_up_rounded), findsOneWidget);
+        expect(find.byIcon(Icons.keyboard_arrow_down_rounded), findsOneWidget);
+        expect(find.byIcon(Icons.cancel_rounded), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.cancel_rounded));
-      await tester.pump();
-      expect(controller.value, isNull);
+        await tester.tap(find.byIcon(Icons.cancel_rounded));
+        await tester.pump();
+        expect(controller.value, isNull);
 
-      controller.dispose();
-    });
+        controller.dispose();
+      },
+    );
   });
 
   group('InputNumberFormField', () {

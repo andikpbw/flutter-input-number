@@ -1,5 +1,11 @@
 # input_number
 
+<p align="center">
+  <a href="https://pub.dev/packages/input_number">
+    <img src="https://raw.githubusercontent.com/andikpbw/flutter-input-number/main/doc/assets/gold_medal_banner.png" alt="#1 Flutter Number Input Library — 160/160 Pub Points • Zero Dependencies" />
+  </a>
+</p>
+
 [![pub package](https://img.shields.io/pub/v/input_number.svg)](https://pub.dev/packages/input_number)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Flutter](https://img.shields.io/badge/Flutter-3.0%2B-02569B?logo=flutter)](https://flutter.dev)
@@ -9,6 +15,31 @@
 A modern, customizable, and zero-dependency numeric input and stepper widget library for Flutter. Built for Material 3 with precision-safe decimal arithmetic, flexible stepper button layouts, currency & unit formatting, long-press turbo acceleration, keyboard/mouse wheel navigation, and full `FormField` support.
 
 > 🌟 Supported & Powered by [Humanize AI](https://humanize.id)
+
+---
+
+## 🎬 Live Preview
+
+<table>
+  <thead>
+    <tr>
+      <th align="center">🖥️ Desktop (macOS / Web / Windows / Linux)</th>
+      <th align="center">📱 Mobile (iOS / Android)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center" valign="middle">
+        <img src="https://raw.githubusercontent.com/andikpbw/flutter-input-number/main/doc/assets/preview_desktop.gif" alt="input_number Desktop Live Preview" width="595" />
+      </td>
+      <td align="center" valign="middle">
+        <img src="https://raw.githubusercontent.com/andikpbw/flutter-input-number/main/doc/assets/preview_mobile.gif" alt="input_number Mobile Live Preview" width="202" />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+> Real Flutter widget previews demonstrating Material 3 **Light & Dark** themes, `split` / `stackedEnd` / `inlineEnd` layouts, `outlined` / `filled` / `pill` variants, IEEE 754 precision-safe stepping (`0.1 + 0.2 == 0.3`), currency/European/percentage/unit formatting, `InputNumberController`, and live `InputNumberFormField` validation.
 
 ---
 
@@ -41,7 +72,7 @@ Add `input_number` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  input_number: ^1.0.2
+  input_number: ^1.0.3
 ```
 
 Or install via the Flutter CLI:
